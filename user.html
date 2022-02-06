@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Warranty Tracking System</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
+</head>
+
+<body>
+  <div class="wrapper">
+    <div class="sidebar">
+      <div class="vWhitespace2"></div>
+      <ul>
+        <li style="background-color: #594f8d"><a href="home.html" style="color: #fff"><i
+              class="fas fa-users"></i>Users</a></li>
+        <li><a href="warranty.html"><i class="fas fa-calendar-check"></i>Warranty</a></li>
+        <li><a href="products.html"><i class="fas fa-store"></i></i>Products</a></li>
+      </ul>
+      <div class="social_media">
+        <p style="text-align:center ; color: #fff ; font-size: smaller">v1.0.0<br>All Rights Reserved</p>
+      </div>
+    </div>
+    <div class="main_content">
+      <div class="header">Users</div>
+      <div class="info">
+        <div class="card">
+          <div class="row" style="margin-bottom: 0px">
+            <div class="col-25" style="margin-bottom: 0px">
+              <label>Name</label>
+            </div>
+            <div class="col-75" style="margin-bottom: 0px">
+              <input type="text" id="name" placeholder="Name">
+            </div>
+            <div class="whitespace1"></div>
+            <div class="col-25" style="margin-bottom: 0px">
+              <label>Username</label>
+            </div>
+            <div class="col-75" style="margin-bottom: 0px">
+              <input type="text" id="username" placeholder="Username">
+            </div>
+          </div>
+          <div class="row" style="margin-bottom: 0px">
+            <div class="col-25">
+              <label>User role</label>
+            </div>
+            <div class="col-75">
+              <select id="userrole">
+                <option value="" disabled selected>--Select User Role--</option>
+                <option value="webAdmin">Web Admin</option>
+                <option value="dealer">Dealer</option>
+                <option value="driver">Driver</option>
+              </select>
+            </div>
+            <div class="whitespace1"></div>
+            <div class="col-25">
+              <label>Password</label>
+            </div>
+            <div class="col-75">
+              <input type="text" id="password" placeholder="Password">
+            </div>
+          </div>
+          <div class="row" style="margin-bottom: 0px">
+            <div class="whitespace2"></div>
+            <input id="createbtn" type="submit" value="Create">
+          </div>
+        </div>
+        <div class="card2">
+          <table id="table">
+            <thead>
+              <th>No.</th>
+              <th>User</th>
+              <th>User Name</th>
+              <th>Role</th>
+            </thead>
+            <tbody id="tbody1"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-------------------Imports and configurations--------------------->
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-app.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBYdsJ-W7kQj2ZUwx0NM5vHkjPtp7LwiIs",
+      authDomain: "warrantyclaimsystem.firebaseapp.com",
+      projectId: "warrantyclaimsystem",
+      storageBucket: "warrantyclaimsystem.appspot.com",
+      messagingSenderId: "862487188628",
+      appId: "1:862487188628:web:36cb11e350055a11cc1081"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+
+    import {
+      getFirestore, doc, getDoc, getDocs, setDoc, collection, addDoc
+    }
+      from "https://www.gstatic.com/firebasejs/9.6.6/firebase-firestore.js";
+
+    const db = getFirestore();
+
+
+    //-----------------Reference---------------------//
+
+    let NameBox = document.getElementById("name");
+    let UserNameBox = document.getElementById("username");
+    let RoleBox = document.getElementById("userrole");
+    let PasswordBox = document.getElementById("password");
+
+    let createbtn = document.getElementById("createbtn");
+
+    var userNo = 0;
+    var tbody = document.getElementById('tbody1');
+
+    //---------------------Insert--------------------//
+
+    async function AddDocument_CustomID() {
+      var ref = doc(db, "User", UserNameBox.value);
+      const docRef = await setDoc(
+        ref, {
+        name: NameBox.value,
+        userName: UserNameBox.value,
+        role: RoleBox.value,
+        password: PasswordBox.value,
+
+      }
+      )
+        .then(() => {
+          alert("data added successfully");
+        })
+        .catch((error) => {
+          alert("Unsuccessful operation, error:" + error)
+        })
+
+        
+      document.getElementById('name').value = '';
+      document.getElementById('username').value = '';
+      document.getElementById('userrole').value = '';
+      document.getElementById('password').value = '';
+
+      location.reload();
+    }
+
+    //---------------Filling data to the table----------------//
+
+    function AddItemToTable(name,username,userrole){
+      let trow = document.createElement("tr");
+      let td1 = document.createElement('td');
+      let td2 = document.createElement('td');
+      let td3 = document.createElement('td');
+      let td4 = document.createElement('td');
+
+      td1.innerHTML = ++userNo;
+      td2.innerHTML = name;
+      td3.innerHTML = username;
+      td4.innerHTML = userrole;
+
+      trow.appendChild(td1);
+      trow.appendChild(td2);
+      trow.appendChild(td3);
+      trow.appendChild(td4);
+
+      tbody.appendChild(trow);
+      console.log(tbody);
+    }
+
+
+    function AddAllItemsToTable(theUser){
+      userNo = 0;
+      tbody.innerHTML="";
+      theUser.forEach(element => {
+        AddItemToTable(element.name, element.userName, element.role);
+      });
+    }
+
+
+    async function GetAllDataOnce(){
+      const querySnapShot = await getDocs(collection(db,"User"));
+
+      var users = [];
+
+      querySnapShot.forEach(doc => {
+        users.push(doc.data());
+      });
+
+      AddAllItemsToTable(users);
+    }
+
+
+    //-------Assign Events to buttons-------//
+
+    createbtn.addEventListener("click", AddDocument_CustomID);
+    window.onload= GetAllDataOnce();
+
+  </script>
+
+</body>
+
+
+</html>
