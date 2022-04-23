@@ -14,67 +14,59 @@
     <div class="sidebar">
       <div class="vWhitespace2"></div>
       <ul>
-        <li style="background-color: #594f8d"><a href="user.html" style="color: #fff"><i
-              class="fas fa-users"></i>Users</a></li>
+        <li><a href="user.html"><i class="fas fa-users"></i>Users</a></li>
         <li><a href="warranty.html"><i class="fas fa-calendar-check"></i>Warranty</a></li>
         <li><a href="products.html"><i class="fas fa-store"></i>Products</a></li>
-        <li><a href="notifications.html"><i class="fas fa-bell"></i>Notifications</a></li>
+        <li  style="background-color: #594f8d"><a href="notifications.html"  style="color: #fff">
+            <i class="fas fa-bell"></i>Notifications</a></li>
       </ul>
       <div class="social_media">
         <p style="text-align:center ; color: #fff ; font-size: smaller">v1.0.0<br>All Rights Reserved</p>
       </div>
     </div>
     <div class="main_content">
-      <div class="header">Users</div>
+      <div class="header">Notifications</div>
       <div class="info">
         <div class="card">
           <div class="row" style="margin-bottom: 0px">
             <div class="col-25" style="margin-bottom: 0px">
-              <label>Name</label>
-            </div>
-            <div class="col-75" style="margin-bottom: 0px">
-              <input type="text" id="name" placeholder="Name">
-            </div>
+                <label>Type</label>
+              </div>
+              <div class="col-75" style="margin-bottom: 0px">
+                <select id="type">
+                  <option value="" disabled selected>--Select Type--</option>
+                  <option value="Notifications">Notifications</option>
+                  <option value="News">News</option>
+                  <option value="Promotions">Promotions</option>
+                </select>
+              </div>
             <div class="whitespace1"></div>
             <div class="col-25" style="margin-bottom: 0px">
-              <label>Username</label>
+              <label>Subject</label>
             </div>
             <div class="col-75" style="margin-bottom: 0px">
-              <input type="text" id="username" placeholder="Username">
+              <input type="text" id="subject" placeholder="Subject">
             </div>
           </div>
           <div class="row" style="margin-bottom: 0px">
             <div class="col-25" style="margin-bottom: 0px">
-              <label>User role</label>
+              <label>Message</label>
             </div>
-            <div class="col-75" style="margin-bottom: 0px">
-              <select id="userrole">
-                <option value="" disabled selected>--Select User Role--</option>
-                <option value="webAdmin">Web Admin</option>
-                <option value="dealer">Dealer</option>
-                <option value="driver">Driver</option>
-              </select>
-            </div>
-            <div class="whitespace1"></div>
-            <div class="col-25" style="margin-bottom: 0px">
-              <label>Password</label>
-            </div>
-            <div class="col-75" style="margin-bottom: 0px">
-              <input type="text" id="password" placeholder="Password">
+            <div class="col-76" style="margin-bottom: 0px">
+              <input type="text" id="message" placeholder="Message">
             </div>
           </div>
           <div class="row" style="margin-bottom: 0px">
             <div class="whitespace2"></div>
-            <input id="createbtn" type="submit" value="Create" style="margin-left: 980px">
+            <input id="sendbtn" type="submit" value="Send" style="margin-left: 980px">
           </div>
         </div>
-        <div class="card2">
+        <div class="card3">
           <table id="table">
             <thead>
-              <th>No.</th>
-              <th>User</th>
-              <th>User Name</th>
-              <th>Role</th>
+              <th>Type</th>
+              <th>Subject</th>
+              <th>Message</th>
             </thead>
             <tbody id="tbody1"></tbody>
           </table>
@@ -121,26 +113,30 @@
 
     //-----------------Reference---------------------//
 
-    let NameBox = document.getElementById("name");
-    let UserNameBox = document.getElementById("username");
-    let RoleBox = document.getElementById("userrole");
-    let PasswordBox = document.getElementById("password");
+    let Type = document.getElementById("type");
+    let Subject = document.getElementById("subject");
+    let Message = document.getElementById("message");
 
-    let createbtn = document.getElementById("createbtn");
+    let createbtn = document.getElementById("sendbtn");
 
     var userNo = 0;
     var tbody = document.getElementById('tbody1');
 
+    let createdTime = new Date().toLocaleString();
+    var date = new Date().toLocaleDateString();
+    console.log(createdTime);
+
     //---------------------Insert--------------------//
 
     async function AddDocument_CustomID() {
-      var ref = doc(db, "User", UserNameBox.value);
+      var ref = doc(db, "Notifications", Subject.value);
       const docRef = await setDoc(
         ref, {
-        name: NameBox.value,
-        userName: UserNameBox.value,
-        role: RoleBox.value,
-        password: PasswordBox.value,
+        type: Type.value,
+        subject: Subject.value,
+        messege: Message.value,
+        createdTime: createdTime,
+        read: false,
 
       }
       )
@@ -154,63 +150,43 @@
 
       
 
-      document.getElementById('name').value = '';
-      document.getElementById('username').value = '';
-      document.getElementById('userrole').value = '';
-      document.getElementById('password').value = '';
+      document.getElementById('type').value = '';
+      document.getElementById('subject').value = '';
+      document.getElementById('message').value = '';
 
       location.reload();
     }
 
-    function firebaseAuth(){
+    // function firebaseAuth(){
 
-      auth.createUserWithEmailAndPassword(UserNameBox,PasswordBox)
-      .then(function(){
-        var u = auth.currentUser
-        alert("user created")
+    //   auth.createUserWithEmailAndPassword(UserNameBox,PasswordBox)
+    //   .then(function(){
+    //     var u = auth.currentUser
+    //     alert("user created")
 
-      })
-      .catch(function(error){
-        const errorCode = error.code;
-        const errorMessage = error.message;
-      })
-      
-      /*const promise = auth.createUserWithEmailAndPassword(UserNameBox.value, PasswordBox.value);
-        .then((userCredential) => {
-          // Signed in 
-          const user = userCredential.user;
-          // ...
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          // ..
-        });
-      const promise = auth.createUserWithEmailAndPassword(UserNameBox.value, PasswordBox.value);
+    //   })
+    //   .catch(function(error){
+    //     const errorCode = error.code;
+    //     const errorMessage = error.message;
+    //   })
 
-       promise.catch(e=>alert(e.message));
-       alert("signup successfully")*/
-
-    }
+    // }
 
     //---------------Filling data to the table----------------//
 
-    function AddItemToTable(name, username, userrole) {
+    function AddItemToTable(type, subject, message) {
       let trow = document.createElement("tr");
       let td1 = document.createElement('td');
       let td2 = document.createElement('td');
       let td3 = document.createElement('td');
-      let td4 = document.createElement('td');
 
-      td1.innerHTML = ++userNo;
-      td2.innerHTML = name;
-      td3.innerHTML = username;
-      td4.innerHTML = userrole;
+      td1.innerHTML = type;
+      td2.innerHTML = subject;
+      td3.innerHTML = message;
 
       trow.appendChild(td1);
       trow.appendChild(td2);
       trow.appendChild(td3);
-      trow.appendChild(td4);
 
       tbody.appendChild(trow);
       console.log(tbody);
@@ -221,21 +197,21 @@
       userNo = 0;
       tbody.innerHTML = "";
       theUser.forEach(element => {
-        AddItemToTable(element.name, element.userName, element.role);
+        AddItemToTable(element.type, element.subject, element.messege);
       });
     }
 
 
     async function GetAllDataOnce() {
-      const querySnapShot = await getDocs(collection(db, "User"));
+      const querySnapShot = await getDocs(collection(db, "Notifications"));
 
-      var users = [];
+      var notifications = [];
 
       querySnapShot.forEach(doc => {
-        users.push(doc.data());
+        notifications.push(doc.data());
       });
 
-      AddAllItemsToTable(users);
+      AddAllItemsToTable(notifications);
     }
 
 
