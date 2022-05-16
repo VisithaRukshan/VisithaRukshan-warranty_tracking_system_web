@@ -12,12 +12,13 @@
 <body>
   <div class="wrapper">
     <div class="sidebar">
-			<img src="logoH_300x600.png" width="200" height="100" class="center">
+      <img src="logoH_300x600.png" width="200" height="100" class="center">
       <ul>
         <li><a href="user.html"><i class="fas fa-users"></i>Users</a></li>
         <li><a href="warranty.html"><i class="fas fa-calendar-check"></i>Warranty</a></li>
+        <li><a href="warrantyClaim.html"><i class="fas fa-calendar-check"></i>Warranty Claim</a></li>
         <li><a href="products.html"><i class="fas fa-store"></i>Products</a></li>
-        <li  style="background-color: #594f8d"><a href="notifications.html"  style="color: #fff">
+        <li style="background-color: #594f8d"><a href="notifications.html" style="color: #fff">
             <i class="fas fa-bell"></i>Notifications</a></li>
       </ul>
       <div class="social_media">
@@ -30,16 +31,16 @@
         <div class="card">
           <div class="row" style="margin-bottom: 0px">
             <div class="col-25" style="margin-bottom: 0px">
-                <label>Type</label>
-              </div>
-              <div class="col-75" style="margin-bottom: 0px">
-                <select id="type">
-                  <option value="" disabled selected>--Select Type--</option>
-                  <option value="Notifications">Notifications</option>
-                  <option value="News">News</option>
-                  <option value="Promotions">Promotions</option>
-                </select>
-              </div>
+              <label>Type</label>
+            </div>
+            <div class="col-75" style="margin-bottom: 0px">
+              <select id="type">
+                <option value="" disabled selected>--Select Type--</option>
+                <option value="Notifications">Notifications</option>
+                <option value="News">News</option>
+                <option value="Promotions">Promotions</option>
+              </select>
+            </div>
             <div class="whitespace1"></div>
             <div class="col-25" style="margin-bottom: 0px">
               <label>Subject</label>
@@ -141,14 +142,14 @@
       }
       )
         .then(() => {
-         // firebaseAuth();
+          // firebaseAuth();
           alert("data added successfully");
         })
         .catch((error) => {
           alert("Unsuccessful operation, error:" + error)
         })
 
-      
+
 
       document.getElementById('type').value = '';
       document.getElementById('subject').value = '';

@@ -12,10 +12,11 @@
 <body>
   <div class="wrapper">
     <div class="sidebar">
-			<img src="logoH_300x600.png" width="200" height="100" class="center">
+      <img src="logoH_300x600.png" width="200" height="100" class="center">
       <ul>
         <li><a href="user.html"><i class="fas fa-users"></i>Users</a></li>
         <li><a href="warranty.html"><i class="fas fa-calendar-check"></i>Warranty</a></li>
+        <li><a href="warrantyClaim.html"><i class="fas fa-calendar-check"></i>Warranty Claim</a></li>
         <li style="background-color: #594f8d"><a href="products.html" style="color: #fff"><i
               class="fas fa-store"></i></i>Products</a></li>
         <li><a href="notifications.html"><i class="fas fa-bell"></i>Notifications</a></li>
@@ -65,8 +66,9 @@
             <div class="col-75" style="margin-bottom: 0px">
               <input type="text" id="price" class="price" placeholder="Price">
             </div>
-            <div class="whitespace3"></div>
-            <div class="Row">
+            <div class="whitespace5"></div>
+            <div class="Row" style="margin-bottom: 10px;margin-top: 10px;">
+              <input id="deletebtn" class="deletebtn" type="delete" value="Delete">
               <input id="updatebtn" class="updatebtn" type="update" value="Update">
               <input id="savebtn" class="savebtn" type="submit" value="Save">
             </div>
@@ -112,7 +114,7 @@
     const app = initializeApp(firebaseConfig);
 
     import {
-      getFirestore, doc, getDoc, getDocs, setDoc, collection, addDoc, updateDoc
+      getFirestore, doc, getDoc, getDocs, setDoc, collection, addDoc, updateDoc, deleteDoc
     }
       from "https://www.gstatic.com/firebasejs/9.6.6/firebase-firestore.js";
 
@@ -129,6 +131,7 @@
 
     let savebtn = document.getElementById("savebtn");
     let updatebtn = document.getElementById("updatebtn");
+    let deletebtn = document.getElementById("deletebtn");
 
     var productNo = 0;
     var tbody = document.getElementById('tbody2');
@@ -139,6 +142,7 @@
 
     savebtn.addEventListener("click", AddDocument_CustomID);
     updatebtn.addEventListener("click", UpdateDocument_CustomID);
+    deletebtn.addEventListener("click", DeleteDocument_CustomID);
 
 
     //---------------------Insert--------------------//
@@ -199,6 +203,26 @@
       location.reload();
     }
 
+    async function DeleteDocument_CustomID() {
+      console.log("delete");
+      var ref = doc(db, "Products", ProductIdBox.value);
+      const docRef = await deleteDoc(ref)
+        .then(() => {
+          alert("Data Deleted successfully");
+        })
+        .catch((error) => {
+          alert("Unsuccessful operation, error:" + error)
+        })
+
+      document.getElementById('productId').value = '';
+      document.getElementById('productName').value = '';
+      document.getElementById('price').value = '';
+      document.getElementById('cashDiscount').value = '';
+      document.getElementById('creditDiscount').value = '';
+
+      location.reload();
+    }
+
 
     //---------------Filling data to the table----------------//
 
@@ -218,7 +242,7 @@
       td4.innerHTML = price;
       td5.innerHTML = caDiscount;
       td6.innerHTML = crDiscount;
-      td7.innerHTML = '<input type="button" name="del" value="Edit" onclick="edi(this);" class="btn btn-submit">'
+      td7.innerHTML = '<input type="submit2" name="del" value="Select" onclick="edi(this);" class="btn btn-submit">'
 
       trow.appendChild(td1);
       trow.appendChild(td2);

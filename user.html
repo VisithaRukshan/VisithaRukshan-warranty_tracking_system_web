@@ -12,11 +12,12 @@
 <body>
   <div class="wrapper">
     <div class="sidebar">
-			<img src="logoH_300x600.png" width="200" height="100" class="center">
+      <img src="logoH_300x600.png" width="200" height="100" class="center">
       <ul>
         <li style="background-color: #594f8d"><a href="user.html" style="color: #fff"><i
               class="fas fa-users"></i>Users</a></li>
         <li><a href="warranty.html"><i class="fas fa-calendar-check"></i>Warranty</a></li>
+        <li><a href="warrantyClaim.html"><i class="fas fa-calendar-check"></i>Warranty Claim</a></li>
         <li><a href="products.html"><i class="fas fa-store"></i>Products</a></li>
         <li><a href="notifications.html"><i class="fas fa-bell"></i>Notifications</a></li>
       </ul>
@@ -30,51 +31,64 @@
         <div class="card">
           <div class="row" style="margin-bottom: 0px">
             <div class="col-25" style="margin-bottom: 0px">
-              <label>Name</label>
+              <label>User Id</label>
             </div>
             <div class="col-75" style="margin-bottom: 0px">
-              <input type="text" id="name" placeholder="Name">
+              <input type="text" id="userid" class="userid" placeholder="User Id">
             </div>
             <div class="whitespace1"></div>
             <div class="col-25" style="margin-bottom: 0px">
-              <label>Username</label>
+              <label>Name</label>
             </div>
             <div class="col-75" style="margin-bottom: 0px">
-              <input type="text" id="username" placeholder="Username">
+              <input type="text" id="name" class="name" placeholder="Name">
             </div>
           </div>
           <div class="row" style="margin-bottom: 0px">
             <div class="col-25" style="margin-bottom: 0px">
+              <label>Username</label>
+            </div>
+            <div class="col-75" style="margin-bottom: 0px">
+              <input type="text" id="username" class="username" placeholder="Username">
+            </div>
+            <div class="whitespace1"></div>
+            <div class="col-25" style="margin-bottom: 0px">
               <label>User role</label>
             </div>
             <div class="col-75" style="margin-bottom: 0px">
-              <select id="userrole">
+              <select id="userrole" class="userrole">
                 <option value="" disabled selected>--Select User Role--</option>
                 <option value="webAdmin">Web Admin</option>
                 <option value="dealer">Dealer</option>
                 <option value="driver">Driver</option>
               </select>
             </div>
-            <div class="whitespace1"></div>
+          </div>
+          <div class="row" style="margin-bottom: 0px">
             <div class="col-25" style="margin-bottom: 0px">
               <label>Password</label>
             </div>
             <div class="col-75" style="margin-bottom: 0px">
               <input type="text" id="password" placeholder="Password">
             </div>
-          </div>
-          <div class="row" style="margin-bottom: 0px">
-            <div class="whitespace2"></div>
-            <input id="createbtn" type="submit" value="Create" style="margin-left: 980px">
+            <div class="whitespace5"></div>
+            <div class="Row" style="margin-bottom: 10px;margin-top: 18px;">
+              <input id="deletebtn" class="deletebtn" type="delete" value="Delete">
+              <input id="updatebtn" class="updatebtn" type="update" value="Update">
+              <input id="createbtn" type="submit" value="Create">
+
+            </div>
           </div>
         </div>
         <div class="card2">
           <table id="table">
             <thead>
               <th>No.</th>
+              <th>User Id</th>
               <th>User</th>
               <th>User Name</th>
               <th>Role</th>
+              <th>Action</th>
             </thead>
             <tbody id="tbody1"></tbody>
           </table>
@@ -109,34 +123,41 @@
     //const auth = firebase.auth();
 
     import {
-      getFirestore, doc, getDoc, getDocs, setDoc, collection, addDoc
+      getFirestore, doc, getDoc, getDocs, setDoc, collection, addDoc, updateDoc, deleteDoc
     }
       from "https://www.gstatic.com/firebasejs/9.6.6/firebase-firestore.js";
-
-
-
 
     const db = getFirestore();
 
 
     //-----------------Reference---------------------//
 
+    let UserIdBox = document.getElementById("userid");
     let NameBox = document.getElementById("name");
     let UserNameBox = document.getElementById("username");
     let RoleBox = document.getElementById("userrole");
     let PasswordBox = document.getElementById("password");
 
     let createbtn = document.getElementById("createbtn");
+    let updatebtn = document.getElementById("updatebtn");
+    let deletebtn = document.getElementById("deletebtn");
 
     var userNo = 0;
     var tbody = document.getElementById('tbody1');
 
+    //-------Assign Events to buttons-------//
+
+    createbtn.addEventListener("click", AddDocument_CustomID);
+    updatebtn.addEventListener("click", UpdateDocument_CustomID);
+    deletebtn.addEventListener("click", DeleteDocument_CustomID);
+
     //---------------------Insert--------------------//
 
     async function AddDocument_CustomID() {
-      var ref = doc(db, "User", UserNameBox.value);
+      var ref = doc(db, "User", UserIdBox.value);
       const docRef = await setDoc(
         ref, {
+        userId: UserIdBox.value,
         name: NameBox.value,
         userName: UserNameBox.value,
         role: RoleBox.value,
@@ -145,15 +166,15 @@
       }
       )
         .then(() => {
-         // firebaseAuth();
+          // firebaseAuth();
           alert("data added successfully");
         })
         .catch((error) => {
           alert("Unsuccessful operation, error:" + error)
         })
 
-      
 
+      document.getElementById('userid').value = '';
       document.getElementById('name').value = '';
       document.getElementById('username').value = '';
       document.getElementById('userrole').value = '';
@@ -162,19 +183,64 @@
       location.reload();
     }
 
-    function firebaseAuth(){
+    async function UpdateDocument_CustomID() {
+      console.log("update");
+      var ref = doc(db, "User", UserIdBox.value);
+      const docRef = await updateDoc(
+        ref, {
+        name: NameBox.value,
+        userName: UserNameBox.value,
+        role: RoleBox.value,
+      }
+      )
+        .then(() => {
+          alert("Data updated successfully");
+        })
+        .catch((error) => {
+          alert("Unsuccessful operation, error:" + error)
+        })
 
-      auth.createUserWithEmailAndPassword(UserNameBox,PasswordBox)
-      .then(function(){
-        var u = auth.currentUser
-        alert("user created")
 
-      })
-      .catch(function(error){
-        const errorCode = error.code;
-        const errorMessage = error.message;
-      })
-      
+      document.getElementById('name').value = '';
+      document.getElementById('username').value = '';
+      document.getElementById('userrole').value = '';
+
+      location.reload();
+    }
+
+    async function DeleteDocument_CustomID() {
+      console.log("delete");
+      var ref = doc(db, "User", UserIdBox.value);
+      const docRef = await deleteDoc(ref)
+        .then(() => {
+          alert("Data Deleted successfully");
+        })
+        .catch((error) => {
+          alert("Unsuccessful operation, error:" + error)
+        })
+
+      document.getElementById('userid').value = '';
+      document.getElementById('name').value = '';
+      document.getElementById('username').value = '';
+      document.getElementById('userrole').value = '';
+
+      location.reload();
+    }
+
+
+    function firebaseAuth() {
+
+      auth.createUserWithEmailAndPassword(UserNameBox, PasswordBox)
+        .then(function () {
+          var u = auth.currentUser
+          alert("user created")
+
+        })
+        .catch(function (error) {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+        })
+
       /*const promise = auth.createUserWithEmailAndPassword(UserNameBox.value, PasswordBox.value);
         .then((userCredential) => {
           // Signed in 
@@ -195,22 +261,28 @@
 
     //---------------Filling data to the table----------------//
 
-    function AddItemToTable(name, username, userrole) {
+    function AddItemToTable(userid, name, username, userrole) {
       let trow = document.createElement("tr");
       let td1 = document.createElement('td');
       let td2 = document.createElement('td');
       let td3 = document.createElement('td');
       let td4 = document.createElement('td');
+      let td5 = document.createElement('td');
+      let td6 = document.createElement('td');
 
       td1.innerHTML = ++userNo;
-      td2.innerHTML = name;
-      td3.innerHTML = username;
-      td4.innerHTML = userrole;
+      td2.innerHTML = userid;
+      td3.innerHTML = name;
+      td4.innerHTML = username;
+      td5.innerHTML = userrole;
+      td6.innerHTML = '<input type="submit1" name="del" value="Select" onclick="edi(this);" class="btn btn-submit">'
 
       trow.appendChild(td1);
       trow.appendChild(td2);
       trow.appendChild(td3);
       trow.appendChild(td4);
+      trow.appendChild(td5);
+      trow.appendChild(td6);
 
       tbody.appendChild(trow);
       console.log(tbody);
@@ -221,12 +293,13 @@
       userNo = 0;
       tbody.innerHTML = "";
       theUser.forEach(element => {
-        AddItemToTable(element.name, element.userName, element.role);
+        AddItemToTable(element.userId, element.name, element.userName, element.role);
       });
     }
 
 
     async function GetAllDataOnce() {
+      console.log("update");
       const querySnapShot = await getDocs(collection(db, "User"));
 
       var users = [];
@@ -238,11 +311,18 @@
       AddAllItemsToTable(users);
     }
 
-
-    //-------Assign Events to buttons-------//
-
-    createbtn.addEventListener("click", AddDocument_CustomID);
     window.onload = GetAllDataOnce();
+
+  </script>
+  <script>
+    function edi(y) {
+
+      var selectdr = y.parentElement.parentElement;
+      document.querySelector(".userid").value = selectdr.cells[1].innerHTML;
+      document.querySelector(".name").value = selectdr.cells[2].innerHTML;
+      document.querySelector(".username").value = selectdr.cells[3].innerHTML;
+      document.querySelector(".userrole").value = selectdr.cells[4].innerHTML;
+    }
 
   </script>
 
