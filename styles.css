@@ -209,6 +209,7 @@ input[type=submit1] {
   border-radius: 4px;
   cursor: pointer;
   float: right;
+  width: 150px;
 }
 
 input[type=submit1]:hover {
@@ -220,7 +221,7 @@ input[type=submit2] {
   color: white;
   padding: 12px 10px;
   border: none;
-  width: 150px;
+  width: 130px;
   border-radius: 4px;
   cursor: pointer;
   float: right;
